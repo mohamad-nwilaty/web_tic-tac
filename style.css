@@ -26,11 +26,11 @@
     border: 2px solid black;
     cursor: pointer;
     display: flex ;
-    position: relative;
+    position: relative; /* the display and position is for the psuedo elements before and after */
     justify-content: center;
     align-items: center;
 }
-
+/* removing the borders so it becomes a board */
 .cell:first-child,
 .cell:nth-child(2),
 .cell:nth-child(3){
@@ -51,38 +51,63 @@
 {
     border-right: none;
 }
+.cell.x,
+.cell.o{
+    cursor: not-allowed;
+}
 
-.cell.x::before, 
-.cell.x::after  {
+.cell.x::before, /* drawing the x and its hover effect */
+.cell.x::after,
+.board.x .cell:not(.o):not(.x):after,
+.board.x .cell:not(.o):not(.x):before {
     content: '';
-    background-color : black;
     width: calc(var(--mark-size) * .2);
     height: var(--mark-size);
-    position: absolute;
+    position: absolute; /* in order for it to show we make it absolute and the cell relative */
 }
-.cell.x::after{
+.cell.x::after,
+.board.x .cell:hover::after
+{
     rotate: 45deg;
 }
 
-.cell.x::before{
+.cell.x::before,
+.board.x .cell:hover::before{
     rotate: -45deg;
 }
 
-.cell.o::before{
+.board.x .cell:not(.o):not(.x):hover:after,
+.board.x .cell:not(.o):not(.x):hover:before{
+    background-color: lightgray;
+}
+.cell.x::before, 
+.cell.x::after{
+    background-color: black;
+}
+
+.cell.o::before, /* drawing the O and its hover effect */
+.board.o .cell:not(.o):not(.x):hover::before{
     content: '';
-    background-color : black;
     width: var(--mark-size);
     height: var(--mark-size);
     border-radius: 50%;
     position: absolute;
 }
-.cell.o::after{
+.cell.o::after,
+.board.o .cell:not(.o):not(.x):hover::after{
     content: '';
     background-color : white;
     width: calc(var(--mark-size) * .65);
     height: calc(var(--mark-size) * .65);
     border-radius: 50%;
     position: absolute;
+}
+.cell.o::before{
+    background-color : black;
+}
+
+.board.o .cell:not(.o):not(.x):hover::before{
+    background-color: lightgray;
 }
 
 .Game-over{
