@@ -1,28 +1,39 @@
 const xClass = "x" ;
 const oClass = "o" ;
-let Xturn = true ;
+let Xturn = false ;
 let counter = 0 ;
+let modeSingleplayer = false ;
 const board = document.getElementById("board");
 const cellElements = document.querySelectorAll('[data-cell]');
 const restartScreen = document.getElementById("Game-over");
 const restartButton = document.getElementById("restart");
+const  aiButton = document.getElementById("single-player");
 const result = document.getElementById("result");
 const WiningMoves = [
     [0,1,2] , [3,4,5] , [6,7,8],
     [0,3,6] , [1,4,7] , [2,5,8],
     [0,4,8] , [2,4,6]
-]
+] ;
+let availibleMoves = [0,1,2,3,4,5,6,7,8] ;
 restartButton.addEventListener('click' , (e)=>{
     restartScreen.style.display = "none";
-    startGame();
+    modeSingleplayer = false ;
+    twoPlayer();
+})
+aiButton.addEventListener('click' , (e)=>{
+    restartScreen.style.display = "none";
+    modeSingleplayer = true ;
+    singlePlayer()
 })
 
 
-startGame()
 
-function startGame(){
+
+
+function twoPlayer(){
+    Xturn = false ;
     counter = 0
-
+    let availibleMoves = [0,1,2,3,4,5,6,7,8] ;
     cellElements.forEach(cell =>{
         cell.addEventListener('click' , handleClick , {once : true})
     });
@@ -31,12 +42,23 @@ function startGame(){
         cell.classList.remove(oClass);
         cell.classList.remove(xClass);
     })
-    if(Xturn){
-        boardPreview(oClass);
-    }
-    else{
-        boardPreview(xClass);
-    }
+
+    boardPreview(xClass);
+}
+
+function singlePlayer(){ 
+    Xturn = false ;
+    counter = 0 ;
+    availibleMoves = [0,1,2,3,4,5,6,7,8] ;
+    boardPreview(xClass);
+    cellElements.forEach(cell =>{
+        cell.addEventListener('click' , handleClick , {once : true})
+    });
+    cellElements.forEach(cell  =>{
+        cell.classList.remove(oClass);
+        cell.classList.remove(xClass);
+    })
+  
 }
 
 
@@ -55,12 +77,16 @@ function handleClick(e){
         result.innerHTML = "Draw";
         restartScreen.style.display = "flex" ;
     }
-    
-    
+    else if(modeSingleplayer && Xturn){ 
+        setTimeout(makeRandomXMove , 400) ; //set a delay to make it more relastic
+    }
 }
 
 function placeMark(cell , currentTurn){
     cell.classList.add(currentTurn);
+    const cellIndex = Number(cell.id);
+    availibleMoves = availibleMoves.filter(index => index !== Number( cell.id) );
+
 }
 function swapTurns(){
     Xturn = !Xturn ;
@@ -82,4 +108,13 @@ function checkWining(currentTurn){
             return cellElements[index].classList.contains(currentTurn) ;
         })
     })
+}
+
+
+function random(){
+    return Math.floor(Math.random() * availibleMoves.length) ;
+}
+function makeRandomXMove(){
+    aiMove = cellElements[availibleMoves[random()]];
+    aiMove.click();
 }
